@@ -1,0 +1,1068 @@
+============================================================
+FILE: artifacts/portfolio/src/App.tsx
+============================================================
+import { useState, useEffect } from "react";
+import profileImg from "/profile.jpeg";
+
+const FIVERR = "https://www.fiverr.com/patunola_samue/";
+const WHATSAPP = "https://wa.me/18122174960";
+const EMAIL = "ennyelitepro@gmail.com";
+
+const SHOPIFY_GREEN = "#008060";
+const SHOPIFY_DARK = "#004c3f";
+const BG = "#f6f6f7";
+const CARD_BG = "#ffffff";
+const TEXT = "#212326";
+const MUTED = "#6d7175";
+const BORDER = "#e3e5e7";
+
+type Service = {
+  icon: string;
+  title: string;
+  desc: string;
+  price: string;
+  benefits: string[];
+  features: string[];
+};
+
+const services: Service[] = [
+  {
+    icon: "🏪", title: "Full Shopify Store Setup", price: "$250",
+    desc: "Complete store build from scratch — products, pages, payment, shipping, and launch-ready.",
+    benefits: ["Get a fully functional store in days, not weeks", "Avoid costly mistakes from improper setup", "Launch with confidence — everything is tested", "Built to convert from day one"],
+    features: ["Product upload & categorization", "Payment gateway integration (Stripe, PayPal)", "Shipping zones & tax rules", "Essential pages (About, FAQ, Policy, Contact)", "Domain connection & SSL", "Mobile-optimized theme setup"],
+  },
+  {
+    icon: "🎨", title: "Theme Design & Customization", price: "$180",
+    desc: "Custom theme design with your brand colors, fonts, layouts, and code edits.",
+    benefits: ["Stand out from competitors with a unique look", "Build brand trust through consistent design", "Increase conversions with a professional feel", "No need to hire a separate designer"],
+    features: ["Custom color palette & typography", "Logo integration & brand alignment", "Section layouts tailored to your niche", "Homepage hero & banner design", "Footer & header customization", "Cross-browser & cross-device testing"],
+  },
+  {
+    icon: "🔄", title: "Store Redesign", price: "$200",
+    desc: "Full visual overhaul of an existing store to modernize look, feel, and conversion flow.",
+    benefits: ["Revive a store that's not converting", "Modernize outdated design to match 2026 trends", "Improve customer trust and time-on-site", "Higher sales without more ad spend"],
+    features: ["Full homepage redesign", "Updated navigation & UX flow", "Mobile-first layout improvements", "New product page structure", "Better visual hierarchy & CTAs", "Speed audit & optimization included"],
+  },
+  {
+    icon: "📦", title: "Product Page Optimization", price: "$120",
+    desc: "High-converting product pages with trust badges, reviews, scarcity elements & clear CTAs.",
+    benefits: ["Turn browsers into buyers on product pages", "Reduce 'add to cart' hesitation", "Increase average order value", "Build trust before the checkout"],
+    features: ["Above-the-fold CTA optimization", "Trust badge placement", "Urgency & scarcity elements", "Review widget integration", "Image gallery improvement", "Bullet-point benefit copy structure"],
+  },
+  {
+    icon: "📱", title: "Mobile UX Optimization", price: "$120",
+    desc: "Make your store look and perform flawlessly on every mobile device.",
+    benefits: ["Capture the 70%+ of shoppers on mobile", "Reduce mobile bounce rate significantly", "Faster checkout experience on phone", "More sales from the same traffic"],
+    features: ["Mobile layout audit & fixes", "Tap target & button sizing", "Sticky mobile buy button", "Mobile navigation overhaul", "Image sizing & compression for mobile", "Mobile checkout flow optimization"],
+  },
+  {
+    icon: "⚡", title: "Speed & Performance Optimization", price: "$150",
+    desc: "Reduce load time, fix Core Web Vitals, compress assets and improve Shopify speed score.",
+    benefits: ["Faster stores rank higher on Google", "Every 1s delay = 7% drop in conversions", "Better mobile experience for all customers", "Improved Shopify store score"],
+    features: ["Core Web Vitals audit (LCP, CLS, FID)", "Image compression & lazy loading", "Unused app script removal", "Theme code minification", "Third-party script deferral", "Before/after speed report"],
+  },
+  {
+    icon: "📈", title: "Conversion Rate Optimization (CRO)", price: "$200",
+    desc: "Analyze and fix drop-off points — layout, trust, urgency, checkout flow — to increase sales.",
+    benefits: ["Get more sales from existing traffic", "Understand where customers drop off", "Data-driven improvements not guesswork", "Compound returns on every traffic source"],
+    features: ["Heatmap & session recording analysis", "Checkout flow audit", "Homepage & product page CRO fixes", "A/B test recommendations", "Trust signal audit", "Actionable CRO report + implementation"],
+  },
+  {
+    icon: "🔍", title: "Shopify SEO Setup", price: "$150",
+    desc: "On-page SEO, meta tags, sitemap, schema markup, and search-ready product structure.",
+    benefits: ["Rank on Google and drive free traffic", "Long-term ROI vs paid ads", "Optimized product titles for search intent", "Structured data for rich search results"],
+    features: ["Keyword research for products & collections", "Meta title & description optimization", "Image alt text optimization", "Sitemap submission to Google", "Schema markup (Product, Review, FAQ)", "Broken link & redirect fixes"],
+  },
+  {
+    icon: "📧", title: "Email Marketing Setup (Klaviyo)", price: "$180",
+    desc: "Welcome series, abandoned cart, post-purchase flows, and newsletter templates.",
+    benefits: ["Email generates $42 for every $1 spent on average", "Recover 15–20% of abandoned carts automatically", "Build repeat customers on autopilot", "Own your audience, not rent it"],
+    features: ["Klaviyo account setup & Shopify sync", "Welcome email flow (3–5 emails)", "Abandoned cart recovery flow", "Post-purchase thank you & upsell flow", "Branded email template design", "Segment setup (new vs returning)"],
+  },
+  {
+    icon: "🛠️", title: "Apps Setup & Integration", price: "$100",
+    desc: "Install, configure, and integrate any Shopify app — reviews, upsells, loyalty, chat, and more.",
+    benefits: ["Avoid app conflicts that break your store", "Save hours of frustrating trial and error", "Apps configured for maximum performance", "Only pay for apps that actually work for you"],
+    features: ["App recommendation for your niche", "Installation & full configuration", "App conflict testing", "Integration with existing theme", "Staff training on app use", "Post-setup support"],
+  },
+  {
+    icon: "🛒", title: "Custom Checkout Optimization", price: "$150",
+    desc: "Reduce cart abandonment with an optimized, trust-rich checkout experience.",
+    benefits: ["The checkout is where money is lost — fix it", "Build trust at the most critical moment", "Reduce form fatigue and friction", "Higher completed purchase rate"],
+    features: ["Checkout page trust badges", "Express checkout buttons (Shop Pay, Apple Pay)", "Custom checkout fields if needed", "Abandoned checkout email trigger setup", "Checkout upsell setup", "Mobile checkout flow testing"],
+  },
+  {
+    icon: "📣", title: "Facebook & Instagram Shop Setup", price: "$120",
+    desc: "Connect your Shopify catalog to Meta, set up shoppable posts and dynamic ads.",
+    benefits: ["Sell directly through Instagram & Facebook", "Shoppable posts turn followers into buyers", "Retarget your store visitors automatically", "Reach billions of social shoppers"],
+    features: ["Meta Business Suite setup", "Shopify-Meta catalog sync", "Instagram Shopping activation", "Facebook Shop setup", "Pixel & Conversions API installation", "Dynamic retargeting ad setup"],
+  },
+  {
+    icon: "🛍️", title: "Google Shopping Feed Setup", price: "$120",
+    desc: "Sync products to Google Merchant Center, fix feed errors, set up Performance Max.",
+    benefits: ["Appear when buyers are actively searching", "Google Shopping drives high-intent traffic", "Fix feed errors that block your ads from showing", "Scale with Performance Max campaigns"],
+    features: ["Google Merchant Center account setup", "Shopify product feed sync", "Feed error diagnosis & fixing", "Performance Max campaign structure", "Product title & description optimization for Google", "Ongoing feed health monitoring guide"],
+  },
+  {
+    icon: "🤝", title: "Upsell & Cross-sell Setup", price: "$130",
+    desc: "Add post-purchase upsells, frequently bought together, and product bundles.",
+    benefits: ["Increase revenue without more customers", "Average order value can grow 20–30%", "Show the right product at the right moment", "Works 24/7 with no extra effort"],
+    features: ["Post-purchase one-click upsell setup", "Frequently bought together widget", "Product bundle builder", "Cart upsell drawer setup", "Upsell offer copywriting", "A/B test variant setup"],
+  },
+  {
+    icon: "🔔", title: "Abandoned Cart Recovery Setup", price: "$130",
+    desc: "Multi-channel recovery — email, SMS, and push notifications — to win back lost sales.",
+    benefits: ["Recover 10–20% of abandoned carts on average", "Fully automated — works while you sleep", "Multi-touch recovery = higher recovery rate", "Pays for itself within days"],
+    features: ["Shopify native abandoned cart email", "Klaviyo or SMSBump flow setup", "Push notification recovery (web)", "3-step sequence timing strategy", "Discount trigger on final follow-up", "Recovery performance tracking"],
+  },
+  {
+    icon: "💳", title: "Payment Gateway Setup", price: "$100",
+    desc: "Configure Stripe, PayPal, Klarna, Afterpay, and local payment methods.",
+    benefits: ["Offer the payment method your customer prefers", "Buy Now Pay Later increases conversions by 30%", "Secure, compliant payment processing", "Reduce checkout abandonment at payment step"],
+    features: ["Stripe & PayPal configuration", "Klarna / Afterpay / Sezzle setup", "Local payment method activation", "Shopify Payments optimization", "Payment testing & validation", "Currency display setup"],
+  },
+  {
+    icon: "🚚", title: "Shipping & Tax Configuration", price: "$100",
+    desc: "Set up shipping zones, rates, real-time carrier quotes, and automated tax rules.",
+    benefits: ["Correct shipping = fewer customer complaints", "Automated tax saves accounting headaches", "Free shipping thresholds increase order value", "Real-time rates = accurate profit margins"],
+    features: ["Shipping zone creation (domestic & international)", "Flat rate, weight-based & calculated rates", "Free shipping threshold setup", "Shopify Tax / TaxJar configuration", "Carrier integration (UPS, FedEx, DHL)", "Shipping policy page"],
+  },
+  {
+    icon: "🌍", title: "Multi-currency & Multi-language", price: "$150",
+    desc: "Enable international selling with geo-based currency switching and translation.",
+    benefits: ["Expand to global markets without a new store", "Customers buy 40% more in their own currency", "Professional localized experience", "One Shopify store — multiple languages"],
+    features: ["Shopify Markets setup", "Geo-based currency detection", "Currency switcher UI component", "Translate & Adapt app setup", "Language switcher in navigation", "Localized pricing rules"],
+  },
+  {
+    icon: "🎁", title: "Loyalty & Referral Program Setup", price: "$130",
+    desc: "Install and configure loyalty points, rewards, and referral programs to boost retention.",
+    benefits: ["Repeat customers spend 5x more than new ones", "Referrals convert 4x better than ads", "Build a community around your brand", "Lower customer acquisition cost over time"],
+    features: ["Smile.io or LoyaltyLion setup", "Points earning & redemption rules", "VIP tier configuration", "Referral link & reward setup", "Loyalty widget on storefront", "Email notification flows for rewards"],
+  },
+  {
+    icon: "🖼️", title: "Homepage & Landing Page Design", price: "$160",
+    desc: "Compelling, conversion-focused homepage or campaign landing page with CTA strategy.",
+    benefits: ["Your homepage is your first impression — make it count", "Landing pages built for a single goal = higher conversions", "Clear messaging that speaks to your buyer", "Designed to guide visitors to purchase"],
+    features: ["Hero section with strong value proposition", "Benefits section & social proof", "Featured product or collection showcase", "Testimonials & trust badges", "Sticky CTA & urgency elements", "Fully mobile-optimized layout"],
+  },
+  {
+    icon: "📋", title: "Collections & Navigation Setup", price: "$110",
+    desc: "Logical store structure, smart collections, mega menus, and filter/search setup.",
+    benefits: ["Customers find products faster = more purchases", "Logical structure improves SEO rankings", "Reduce bounce from confused navigation", "Showcase your full catalog effectively"],
+    features: ["Smart collection rules setup", "Manual collection curation", "Mega menu / dropdown navigation", "Mobile hamburger menu optimization", "Predictive search setup", "Breadcrumb & filter setup"],
+  },
+  {
+    icon: "⭐", title: "Product Reviews Setup", price: "$100",
+    desc: "Install and configure review apps (Judge.me, Loox, etc.) with import of existing reviews.",
+    benefits: ["93% of buyers read reviews before purchasing", "Reviews increase conversions by up to 270%", "Import existing reviews to start with social proof", "Star ratings appear in Google search results"],
+    features: ["Judge.me or Loox installation", "Review request email automation", "Review widget on product pages", "Star rating on collection pages", "Review import (from Amazon, AliExpress, etc.)", "Google structured data for review stars"],
+  },
+  {
+    icon: "🔒", title: "Store Security & Backup", price: "$100",
+    desc: "Security audit, 2FA setup, backup configuration, and fraud protection setup.",
+    benefits: ["Protect your store from hackers & fraud", "Never lose your store data or customizations", "Detect and block fraudulent orders automatically", "Peace of mind so you can focus on growth"],
+    features: ["Two-factor authentication setup", "Staff account permissions audit", "Rewind or Matrixify backup config", "Shopify Fraud Protect activation", "Theme backup & version control", "Suspicious login alert setup"],
+  },
+];
+
+const reviews = [
+  { name: "Sarah M.", country: "🇺🇸 United States", text: "Absolutely transformed my store! Sales went up 40% within the first month. Professional, fast, and incredibly talented.", date: "May 2026" },
+  { name: "James K.", country: "🇬🇧 United Kingdom", text: "Best Shopify expert I've hired. Clean design, excellent mobile experience, and delivered ahead of schedule.", date: "April 2026" },
+  { name: "Anika R.", country: "🇨🇦 Canada", text: "My product pages look stunning now. Conversion rate improved dramatically. Highly recommend!", date: "April 2026" },
+  { name: "Carlos V.", country: "🇦🇺 Australia", text: "Exceptional work on my store redesign. The attention to detail is incredible. Will hire again!", date: "March 2026" },
+  { name: "Priya S.", country: "🇮🇳 India", text: "Fixed all my theme issues and added custom sections I thought were impossible. A true Shopify expert.", date: "March 2026" },
+  { name: "Daniel O.", country: "🇳🇬 Nigeria", text: "Great communication throughout. Delivered a beautiful, fast-loading store that my customers love.", date: "February 2026" },
+  { name: "Emma L.", country: "🇩🇪 Germany", text: "The product page optimization was brilliant. Clear layout, trust badges, and great conversion flow.", date: "February 2026" },
+  { name: "Michael T.", country: "🇺🇸 United States", text: "Redesigned my entire store in under a week. Results were immediate — best investment I made.", date: "January 2026" },
+  { name: "Fatima A.", country: "🇸🇦 Saudi Arabia", text: "Professional, punctual, and very skilled. My Shopify store looks world-class now.", date: "January 2026" },
+  { name: "Lucas B.", country: "🇫🇷 France", text: "Outstanding work. My store went from looking generic to premium. Customers noticed immediately.", date: "December 2025" },
+  { name: "Natalie W.", country: "🇺🇸 United States", text: "Fixed a complex cart issue and redesigned my homepage. 5 stars all the way!", date: "November 2025" },
+  { name: "Omar H.", country: "🇦🇪 UAE", text: "Very professional and knowledgeable. Store speed improved and bounce rate dropped significantly.", date: "October 2025" },
+];
+
+const portfolioProjects = [
+  { title: "Fashion Brand Redesign", tag: "Full Store Redesign", result: "+52% Conversion", value: "Client paid: $200", img: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=600&q=80" },
+  { title: "Electronics Store", tag: "Product Page Optimization", result: "+38% Add-to-Cart", value: "Client paid: $120", img: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&q=80" },
+  { title: "Skincare Brand Launch", tag: "New Store Setup", result: "$12K — Month 1", value: "Client paid: $250", img: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80" },
+  { title: "Home Decor Mobile UX", tag: "Mobile Optimization", result: "+61% Mobile Sales", value: "Client paid: $120", img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80" },
+  { title: "Health & Wellness Store", tag: "CRO + Landing Page", result: "+44% ROAS", value: "Client paid: $200", img: "https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?w=600&q=80" },
+  { title: "Jewelry Boutique", tag: "Theme Customization", result: "3x Repeat Purchases", value: "Client paid: $180", img: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80" },
+];
+
+function ShopifyDashboard() {
+  return (
+    <div style={{ background: "#1a1a2e", borderRadius: 10, overflow: "hidden", border: "1px solid #2d2d44", fontFamily: "monospace" }}>
+      <div style={{ background: "#16213e", padding: "8px 14px", display: "flex", alignItems: "center", gap: 6 }}>
+        <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#ff5f57" }} />
+        <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#febc2e" }} />
+        <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#28c840" }} />
+        <span style={{ color: "#6b7280", fontSize: "0.72rem", marginLeft: 8 }}>admin.shopify.com — Analytics Overview</span>
+      </div>
+      <div style={{ padding: "16px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+          <span style={{ color: "#e2e8f0", fontWeight: 700, fontSize: "0.95rem" }}>Analytics</span>
+          <span style={{ background: "#2d2d44", color: "#94a3b8", padding: "3px 10px", borderRadius: 6, fontSize: "0.72rem" }}>Jan 1 – Jan 31, 2026</span>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
+          {[
+            { label: "Total Sales", value: "$84,312", change: "+34%" },
+            { label: "Orders", value: "1,247", change: "+28%" },
+            { label: "Conversion Rate", value: "4.8%", change: "+1.2%" },
+            { label: "Avg. Order Value", value: "$67.61", change: "+18%" },
+          ].map(s => (
+            <div key={s.label} style={{ background: "#0f172a", borderRadius: 8, padding: "10px 12px" }}>
+              <div style={{ color: "#64748b", fontSize: "0.68rem", marginBottom: 4 }}>{s.label}</div>
+              <div style={{ color: "#f1f5f9", fontWeight: 700, fontSize: "1.1rem" }}>{s.value}</div>
+              <div style={{ color: "#22c55e", fontSize: "0.68rem" }}>▲ {s.change} vs last period</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ background: "#0f172a", borderRadius: 8, padding: "10px 12px" }}>
+          <div style={{ color: "#64748b", fontSize: "0.68rem", marginBottom: 8 }}>Daily Revenue — January 2026</div>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 3, height: 50 }}>
+            {[40, 60, 45, 80, 65, 90, 75, 95, 70, 85, 100, 88, 72, 95].map((h, i) => (
+              <div key={i} style={{ flex: 1, height: `${h}%`, background: i === 13 ? "#22c55e" : "#1e3a5f", borderRadius: "2px 2px 0 0" }} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GoogleAnalytics() {
+  return (
+    <div style={{ background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #e2e8f0" }}>
+      <div style={{ background: "#f8f9fa", padding: "8px 14px", display: "flex", alignItems: "center", gap: 6, borderBottom: "1px solid #e2e8f0" }}>
+        <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#ff5f57" }} />
+        <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#febc2e" }} />
+        <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#28c840" }} />
+        <span style={{ color: "#9ca3af", fontSize: "0.72rem", marginLeft: 8 }}>analytics.google.com — Audience Overview</span>
+      </div>
+      <div style={{ padding: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+          <span style={{ fontWeight: 700, color: "#202124", fontSize: "0.95rem" }}>Users & Sessions</span>
+          <span style={{ background: "#f1f3f4", color: "#5f6368", padding: "3px 10px", borderRadius: 6, fontSize: "0.72rem" }}>Jan 1 – Jan 31, 2026</span>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 14 }}>
+          {[
+            { label: "Users", value: "28,341", change: "+187%", color: "#1a73e8" },
+            { label: "Sessions", value: "41,892", change: "+203%", color: "#34a853" },
+            { label: "Bounce Rate", value: "31.2%", change: "-18%", color: "#ea4335" },
+          ].map(s => (
+            <div key={s.label} style={{ borderTop: `3px solid ${s.color}`, paddingTop: 8 }}>
+              <div style={{ color: "#5f6368", fontSize: "0.68rem" }}>{s.label}</div>
+              <div style={{ color: "#202124", fontWeight: 700, fontSize: "1.05rem" }}>{s.value}</div>
+              <div style={{ color: "#34a853", fontSize: "0.68rem" }}>{s.change}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ background: "#f8f9fa", borderRadius: 6, padding: 10, position: "relative", height: 60 }}>
+          <svg width="100%" height="100%" viewBox="0 0 300 60" preserveAspectRatio="none">
+            <polyline points="0,55 20,48 40,42 60,35 80,30 100,38 120,22 140,18 160,25 180,12 200,8 220,15 240,5 260,10 280,3 300,6" fill="none" stroke="#1a73e8" strokeWidth="2" />
+            <polyline points="0,55 20,48 40,42 60,35 80,30 100,38 120,22 140,18 160,25 180,12 200,8 220,15 240,5 260,10 280,3 300,6 300,60 0,60" fill="#e8f0fe" stroke="none" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ShopifyOrders() {
+  const orders = [
+    { id: "#5842", customer: "James K.", total: "$284.00", status: "Fulfilled" },
+    { id: "#5841", customer: "Sarah M.", total: "$127.50", status: "Fulfilled" },
+    { id: "#5840", customer: "Anika R.", total: "$549.00", status: "Fulfilled" },
+    { id: "#5839", customer: "Carlos V.", total: "$93.00", status: "Fulfilled" },
+    { id: "#5838", customer: "Emma L.", total: "$318.00", status: "Fulfilled" },
+    { id: "#5837", customer: "Omar H.", total: "$761.00", status: "Fulfilled" },
+  ];
+  return (
+    <div style={{ background: "#fff", borderRadius: 10, overflow: "hidden", border: "1px solid #e2e8f0" }}>
+      <div style={{ background: "#f8f9fa", padding: "8px 14px", display: "flex", alignItems: "center", gap: 6, borderBottom: "1px solid #e2e8f0" }}>
+        <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#ff5f57" }} />
+        <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#febc2e" }} />
+        <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#28c840" }} />
+        <span style={{ color: "#9ca3af", fontSize: "0.72rem", marginLeft: 8 }}>admin.shopify.com — Orders — Jan 2026</span>
+      </div>
+      <div style={{ padding: "10px 14px" }}>
+        <div style={{ marginBottom: 10 }}>
+          <span style={{ fontWeight: 700, color: "#202124", fontSize: "0.9rem" }}>Recent Orders — January 2026</span>
+        </div>
+        {orders.map(o => (
+          <div key={o.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "7px 0", borderBottom: "1px solid #f1f3f4", fontSize: "0.78rem" }}>
+            <span style={{ color: "#1a73e8", fontWeight: 600 }}>{o.id}</span>
+            <span style={{ color: "#5f6368", flex: 1, margin: "0 10px" }}>{o.customer}</span>
+            <span style={{ color: "#202124", fontWeight: 600 }}>{o.total}</span>
+            <span style={{ background: "#e6f4ea", color: "#137333", padding: "2px 8px", borderRadius: 10, marginLeft: 8 }}>{o.status}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div
+      style={{ background: CARD_BG, border: `1px solid ${open ? SHOPIFY_GREEN : BORDER}`, borderRadius: 10, overflow: "hidden", transition: "border-color 0.2s" }}
+    >
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 20px", background: "none", border: "none", cursor: "pointer", textAlign: "left", gap: 12 }}
+      >
+        <span style={{ fontWeight: 700, fontSize: "0.95rem", color: TEXT }}>{q}</span>
+        <span style={{ color: SHOPIFY_GREEN, fontSize: "1.2rem", fontWeight: 700, flexShrink: 0, transition: "transform 0.2s", transform: open ? "rotate(45deg)" : "rotate(0deg)" }}>+</span>
+      </button>
+      {open && (
+        <div style={{ padding: "0 20px 18px", color: MUTED, fontSize: "0.9rem", lineHeight: 1.7, borderTop: `1px solid ${BORDER}`, paddingTop: 14 }}>
+          {a}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StarRating({ count = 5 }: { count?: number }) {
+  return <span style={{ color: "#f59e0b", fontSize: "1rem" }}>{"★".repeat(count)}{"☆".repeat(5 - count)}</span>;
+}
+
+function ServiceModal({ service, onClose }: { service: Service; onClose: () => void }) {
+  const waMsg = encodeURIComponent(`Hi Samuel, I'd like to order "${service.title}" (${service.price}). Please send me payment details.`);
+  const mailSubject = encodeURIComponent(`Order: ${service.title} — ${service.price}`);
+  const mailBody = encodeURIComponent(`Hi Samuel,\n\nI'd like to order the "${service.title}" service listed at ${service.price}.\n\nPlease send me the payment link.\n\nThank you.`);
+
+  return (
+    <div
+      onClick={onClose}
+      style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{ background: CARD_BG, borderRadius: 14, maxWidth: 620, width: "100%", maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}
+      >
+        {/* Modal header */}
+        <div style={{ background: `linear-gradient(135deg, ${SHOPIFY_DARK}, ${SHOPIFY_GREEN})`, color: "white", padding: "24px 24px 20px", borderRadius: "14px 14px 0 0" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div>
+              <div style={{ fontSize: "2rem", marginBottom: 8 }}>{service.icon}</div>
+              <h2 style={{ fontSize: "1.3rem", fontWeight: 700, margin: 0 }}>{service.title}</h2>
+              <p style={{ color: "rgba(255,255,255,0.8)", marginTop: 6, fontSize: "0.9rem" }}>{service.desc}</p>
+            </div>
+            <button onClick={onClose} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "white", width: 32, height: 32, borderRadius: "50%", cursor: "pointer", fontSize: "1.1rem", flexShrink: 0, marginLeft: 12 }}>✕</button>
+          </div>
+          <div style={{ marginTop: 14, background: "rgba(255,255,255,0.15)", display: "inline-block", padding: "6px 16px", borderRadius: 20, fontWeight: 700, fontSize: "1.1rem" }}>
+            {service.price}
+          </div>
+        </div>
+
+        <div style={{ padding: 24 }}>
+          {/* Benefits */}
+          <div style={{ marginBottom: 22 }}>
+            <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: 12, color: SHOPIFY_DARK }}>✅ Why You Need This</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {service.benefits.map((b, i) => (
+                <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                  <span style={{ color: SHOPIFY_GREEN, fontWeight: 700, flexShrink: 0, marginTop: 1 }}>→</span>
+                  <span style={{ fontSize: "0.9rem", color: TEXT }}>{b}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Features */}
+          <div style={{ marginBottom: 24 }}>
+            <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: 12, color: SHOPIFY_DARK }}>🔧 What's Included</h3>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              {service.features.map((f, i) => (
+                <div key={i} style={{ display: "flex", gap: 8, alignItems: "flex-start", background: "#f0fdf4", borderRadius: 8, padding: "8px 10px" }}>
+                  <span style={{ color: SHOPIFY_GREEN, flexShrink: 0 }}>✓</span>
+                  <span style={{ fontSize: "0.82rem", color: TEXT }}>{f}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Payment / Order section */}
+          <div style={{ background: "#f8fafc", border: `1px solid ${BORDER}`, borderRadius: 10, padding: 18 }}>
+            <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: 4, color: SHOPIFY_DARK }}>💳 How to Order & Pay</h3>
+            <p style={{ color: MUTED, fontSize: "0.85rem", marginBottom: 16 }}>
+              Choose how you'd like to proceed. I'll send a secure payment link once we confirm details.
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <a
+                href={`https://wa.me/18122174960?text=${waMsg}`}
+                target="_blank" rel="noreferrer"
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#25d366", color: "white", padding: "13px", borderRadius: 8, textDecoration: "none", fontWeight: 700, fontSize: "0.95rem" }}
+              >
+                💬 Order via WhatsApp — Get Invoice
+              </a>
+              <a
+                href={`https://mail.google.com/mail/?view=cm&to=${EMAIL}&su=${mailSubject}&body=${mailBody}`}
+                target="_blank" rel="noreferrer"
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#3b82f6", color: "white", padding: "13px", borderRadius: 8, textDecoration: "none", fontWeight: 700, fontSize: "0.95rem" }}
+              >
+                ✉️ Order via Email — Get Invoice
+              </a>
+              <a
+                href={FIVERR}
+                target="_blank" rel="noreferrer"
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: CARD_BG, color: MUTED, padding: "11px", borderRadius: 8, textDecoration: "none", fontWeight: 600, fontSize: "0.88rem", border: `1px solid ${BORDER}` }}
+              >
+                Or order on Fiverr →
+              </a>
+            </div>
+            <p style={{ color: MUTED, fontSize: "0.78rem", marginTop: 12, textAlign: "center" }}>
+              🔒 Secure payment via PayPal, bank transfer, or Fiverr escrow. 100% satisfaction guaranteed.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+type LiveReview = {
+  id: string;
+  name: string;
+  country: string;
+  rating: number;
+  text: string;
+  date: string;
+};
+
+function StarPicker({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const [hovered, setHovered] = useState(0);
+  return (
+    <div style={{ display: "flex", gap: 4 }}>
+      {[1, 2, 3, 4, 5].map(n => (
+        <span
+          key={n}
+          onClick={() => onChange(n)}
+          onMouseEnter={() => setHovered(n)}
+          onMouseLeave={() => setHovered(0)}
+          style={{ fontSize: "1.8rem", cursor: "pointer", color: n <= (hovered || value) ? "#f59e0b" : "#d1d5db", transition: "color 0.1s" }}
+        >★</span>
+      ))}
+    </div>
+  );
+}
+
+export default function App() {
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [submitted, setSubmitted] = useState(false);
+  const [showAll, setShowAll] = useState(true);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [liveReviews, setLiveReviews] = useState<LiveReview[]>([]);
+  const [reviewForm, setReviewForm] = useState({ name: "", country: "", rating: 0, text: "" });
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [reviewError, setReviewError] = useState("");
+
+  useEffect(() => {
+    fetch("/api/reviews")
+      .then(r => r.json())
+      .then((data: LiveReview[]) => setLiveReviews(data))
+      .catch(() => {});
+  }, []);
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (reviewForm.rating === 0) { setReviewError("Please select a star rating."); return; }
+    setReviewSubmitting(true);
+    setReviewError("");
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reviewForm),
+      });
+      if (!res.ok) throw new Error("Failed");
+      const newReview: LiveReview = await res.json();
+      setLiveReviews(prev => [newReview, ...prev]);
+      setReviewSubmitted(true);
+      setReviewForm({ name: "", country: "", rating: 0, text: "" });
+    } catch {
+      setReviewError("Something went wrong. Please try again.");
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
+
+  const displayedReviews = showAll ? reviews : reviews.slice(0, 6);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const data = new FormData();
+    data.append("name", form.name);
+    data.append("email", form.email);
+    data.append("message", form.message);
+    data.append("_captcha", "false");
+    fetch(`https://formsubmit.co/ajax/${EMAIL}`, { method: "POST", body: data }).catch(() => {});
+    setSubmitted(true);
+  };
+
+  return (
+    <div style={{ background: BG, color: TEXT, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", minHeight: "100vh" }}>
+
+      {selectedService && <ServiceModal service={selectedService} onClose={() => setSelectedService(null)} />}
+
+      {/* Floating WhatsApp button */}
+      <a
+        href={WHATSAPP}
+        target="_blank"
+        rel="noreferrer"
+        title="Chat on WhatsApp"
+        style={{ position: "fixed", bottom: 28, right: 28, zIndex: 999, width: 58, height: 58, borderRadius: "50%", background: "#25d366", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 20px rgba(37,211,102,0.5)", textDecoration: "none", transition: "transform 0.2s" }}
+        onMouseOver={e => (e.currentTarget.style.transform = "scale(1.1)")}
+        onMouseOut={e => (e.currentTarget.style.transform = "scale(1)")}
+      >
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="white" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 2C8.268 2 2 8.268 2 16c0 2.49.651 4.826 1.788 6.85L2 30l7.346-1.767A13.935 13.935 0 0016 30c7.732 0 14-6.268 14-14S23.732 2 16 2zm0 25.5a11.46 11.46 0 01-5.845-1.603l-.418-.249-4.36 1.05 1.082-4.246-.272-.437A11.46 11.46 0 014.5 16C4.5 9.649 9.649 4.5 16 4.5S27.5 9.649 27.5 16 22.351 27.5 16 27.5zm6.29-8.617c-.345-.172-2.04-1.006-2.356-1.12-.316-.115-.546-.172-.776.172-.23.345-.891 1.12-1.092 1.35-.2.23-.402.258-.747.086-.345-.172-1.456-.537-2.773-1.712-1.025-.914-1.717-2.043-1.918-2.388-.2-.345-.021-.532.151-.703.155-.155.345-.402.517-.603.172-.2.23-.345.345-.575.115-.23.057-.431-.029-.603-.086-.172-.776-1.871-1.063-2.562-.28-.672-.564-.58-.776-.59l-.66-.011a1.27 1.27 0 00-.92.431c-.316.345-1.207 1.179-1.207 2.876s1.235 3.336 1.407 3.566c.172.23 2.43 3.71 5.887 5.203.823.355 1.465.567 1.965.726.826.263 1.578.226 2.172.137.662-.099 2.04-.833 2.328-1.638.287-.805.287-1.494.2-1.638-.086-.143-.316-.23-.66-.402z"/>
+        </svg>
+      </a>
+
+      {/* Nav */}
+      <nav style={{ background: SHOPIFY_DARK, padding: "14px 0" }}>
+        <div style={{ width: "90%", maxWidth: 1100, margin: "auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <img src={profileImg} alt="Enny Elite" style={{ width: 36, height: 36, borderRadius: 6, objectFit: "cover" }} />
+            <span style={{ color: "white", fontWeight: 700, fontSize: "1rem" }}>Enny Elite · Shopify Expert</span>
+          </div>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <a href={FIVERR} target="_blank" rel="noreferrer" style={{ background: SHOPIFY_GREEN, color: "white", padding: "8px 18px", borderRadius: 6, textDecoration: "none", fontWeight: 700, fontSize: "0.88rem" }}>Hire Me on Fiverr</a>
+            <a href={WHATSAPP} target="_blank" rel="noreferrer" style={{ background: "#25d366", color: "white", padding: "8px 18px", borderRadius: 6, textDecoration: "none", fontWeight: 700, fontSize: "0.88rem" }}>WhatsApp</a>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <div style={{ background: `linear-gradient(135deg, ${SHOPIFY_DARK} 0%, ${SHOPIFY_GREEN} 100%)`, color: "white", padding: "60px 0 80px" }}>
+        <div style={{ width: "90%", maxWidth: 1100, margin: "auto" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 30, flexWrap: "wrap" }}>
+            <img src={profileImg} alt="Samuel Patunola" style={{ width: 110, height: 110, borderRadius: "50%", objectFit: "cover", border: "4px solid white", flexShrink: 0, background: "#000" }} />
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
+                <h1 style={{ fontSize: "2rem", fontWeight: 700, margin: 0 }}>Samuel Patunola</h1>
+                <span style={{ background: "rgba(255,255,255,0.2)", border: "1.5px solid rgba(255,255,255,0.5)", padding: "3px 12px", borderRadius: 20, fontSize: "0.78rem", fontWeight: 700 }}>✓ Shopify Expert</span>
+              </div>
+              <p style={{ color: "rgba(255,255,255,0.85)", marginBottom: 18, fontSize: "1rem" }}>
+                Shopify Store Design · Conversion Rate Optimization · SEO & Growth Expert
+              </p>
+              <div style={{ display: "flex", gap: 28, flexWrap: "wrap" }}>
+                {[["60+", "5-Star Reviews"], ["80+", "Projects Done"], ["4.9", "Avg. Rating"], ["3yr", "Experience"]].map(([val, label]) => (
+                  <div key={label} style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "1.6rem", fontWeight: 700 }}>{val}</div>
+                    <div style={{ fontSize: "0.78rem", opacity: 0.8 }}>{label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Rating bar */}
+      <div style={{ background: CARD_BG, borderBottom: `1px solid ${BORDER}`, padding: "14px 0" }}>
+        <div style={{ width: "90%", maxWidth: 1100, margin: "auto", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+          <StarRating />
+          <span style={{ fontWeight: 700 }}>4.9 / 5</span>
+          <span style={{ color: MUTED, fontSize: "0.88rem" }}>Based on 60 verified client reviews</span>
+          <span style={{ background: "#fef3c7", color: "#92400e", padding: "3px 12px", borderRadius: 20, fontSize: "0.78rem", fontWeight: 700, border: "1px solid #fcd34d" }}>🆕 New Seller on Fiverr</span>
+          <a href={FIVERR} target="_blank" rel="noreferrer" style={{ marginLeft: "auto", color: SHOPIFY_GREEN, fontWeight: 600, fontSize: "0.9rem", textDecoration: "none" }}>View Fiverr Profile →</a>
+        </div>
+      </div>
+
+      {/* Free Store Audit Banner */}
+      <div style={{ background: "linear-gradient(135deg, #1e3a5f 0%, #0f2d4a 100%)", borderBottom: "3px solid #f59e0b", padding: "28px 0" }}>
+        <div style={{ width: "90%", maxWidth: 1100, margin: "auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
+            <div style={{ fontSize: "2.2rem", flexShrink: 0 }}>🔍</div>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                <span style={{ background: "#f59e0b", color: "#1a1a1a", padding: "2px 10px", borderRadius: 20, fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.05em" }}>LIMITED OFFER</span>
+                <span style={{ color: "white", fontWeight: 800, fontSize: "1.1rem" }}>Get a FREE Shopify Store Audit</span>
+              </div>
+              <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.88rem", margin: 0, lineHeight: 1.5 }}>
+                I'll personally review your store and send you a detailed report — conversion issues, speed problems, design gaps — completely free. No strings attached.
+              </p>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 10, flexShrink: 0, flexWrap: "wrap" }}>
+            <a
+              href={`https://wa.me/18122174960?text=${encodeURIComponent("Hi Samuel, I'd like to claim my FREE Shopify Store Audit. Here's my store URL: ")}`}
+              target="_blank" rel="noreferrer"
+              style={{ display: "flex", alignItems: "center", gap: 8, background: "#f59e0b", color: "#1a1a1a", padding: "12px 22px", borderRadius: 8, textDecoration: "none", fontWeight: 800, fontSize: "0.92rem", whiteSpace: "nowrap" }}
+            >
+              Claim Free Audit →
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ width: "90%", maxWidth: 1100, margin: "40px auto" }}>
+
+        {/* Services */}
+        <section style={{ marginBottom: 60 }}>
+          <h2 style={{ fontSize: "1.6rem", fontWeight: 700, marginBottom: 4 }}>All Shopify Services</h2>
+          <p style={{ color: MUTED, marginBottom: 24 }}>Click any service to see benefits, features & how to pay</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 14 }}>
+            {services.map(s => (
+              <div
+                key={s.title}
+                onClick={() => setSelectedService(s)}
+                style={{ background: CARD_BG, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 18, display: "flex", gap: 14, alignItems: "flex-start", cursor: "pointer", transition: "all 0.2s", position: "relative" }}
+                onMouseOver={e => { (e.currentTarget as HTMLDivElement).style.borderColor = SHOPIFY_GREEN; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 4px 20px rgba(0,128,96,0.12)"; }}
+                onMouseOut={e => { (e.currentTarget as HTMLDivElement).style.borderColor = BORDER; (e.currentTarget as HTMLDivElement).style.boxShadow = "none"; }}
+              >
+                <div style={{ fontSize: "1.6rem", flexShrink: 0 }}>{s.icon}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 700, marginBottom: 3, fontSize: "0.95rem" }}>{s.title}</div>
+                  <div style={{ color: MUTED, fontSize: "0.85rem", marginBottom: 10, lineHeight: 1.5 }}>{s.desc}</div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ background: "#f0fdf4", color: SHOPIFY_GREEN, padding: "3px 10px", borderRadius: 20, fontSize: "0.78rem", fontWeight: 700 }}>{s.price}</span>
+                    <span style={{ color: SHOPIFY_GREEN, fontSize: "0.8rem", fontWeight: 600 }}>View details →</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* My Process */}
+        <section style={{ marginBottom: 60 }}>
+          <h2 style={{ fontSize: "1.6rem", fontWeight: 700, marginBottom: 4 }}>My Process</h2>
+          <p style={{ color: MUTED, marginBottom: 28 }}>Simple, clear, and stress-free — here's what working with me looks like</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 0, position: "relative" }}>
+            {[
+              { step: "01", icon: "💬", title: "Discuss", color: "#3b82f6", desc: "We chat on WhatsApp or email. You tell me your goals, share your store URL, and I ask a few quick questions to understand exactly what you need." },
+              { step: "02", icon: "📝", title: "Plan", color: "#8b5cf6", desc: "I put together a clear plan with scope, timeline, and price. No surprises — you approve everything before I start a single thing." },
+              { step: "03", icon: "🔨", title: "Build", color: SHOPIFY_GREEN, desc: "I get to work on your Shopify store. You'll receive progress updates and can check in at any time. I work fast without cutting corners." },
+              { step: "04", icon: "🚀", title: "Deliver", color: "#f59e0b", desc: "You review the finished work. If anything needs tweaking, I'll fix it. Once you're 100% happy, your store is live and ready to sell." },
+            ].map((item, i, arr) => (
+              <div key={item.step} style={{ position: "relative" }}>
+                {/* Connector line */}
+                {i < arr.length - 1 && (
+                  <div style={{ position: "absolute", top: 36, right: 0, width: "50%", height: 2, background: `linear-gradient(to right, ${item.color}, ${arr[i + 1].color})`, zIndex: 0, display: "block" }} className="connector" />
+                )}
+                <div style={{ background: CARD_BG, border: `1px solid ${BORDER}`, borderRadius: 12, padding: "24px 20px", margin: "0 8px", position: "relative", zIndex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+                    <div style={{ width: 44, height: 44, borderRadius: "50%", background: item.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.3rem", flexShrink: 0, boxShadow: `0 4px 12px ${item.color}40` }}>
+                      {item.icon}
+                    </div>
+                    <div>
+                      <div style={{ color: item.color, fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.08em" }}>STEP {item.step}</div>
+                      <div style={{ fontWeight: 800, fontSize: "1.05rem", color: TEXT }}>{item.title}</div>
+                    </div>
+                  </div>
+                  <p style={{ color: MUTED, fontSize: "0.88rem", lineHeight: 1.65, margin: 0 }}>{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Timeline summary bar */}
+          <div style={{ background: SHOPIFY_DARK, borderRadius: 10, padding: "16px 24px", marginTop: 20, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+            <span style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.9rem" }}>⏱️ Most projects completed in <strong style={{ color: "white" }}>2–7 business days</strong></span>
+            <a
+              href={`https://wa.me/18122174960?text=${encodeURIComponent("Hi Samuel, I'd like to get started. Can we discuss my project?")}`}
+              target="_blank" rel="noreferrer"
+              style={{ background: SHOPIFY_GREEN, color: "white", padding: "10px 20px", borderRadius: 8, textDecoration: "none", fontWeight: 700, fontSize: "0.9rem" }}
+            >
+              Start the Process →
+            </a>
+          </div>
+        </section>
+
+        {/* Portfolio */}
+        <section style={{ marginBottom: 60 }}>
+          <h2 style={{ fontSize: "1.6rem", fontWeight: 700, marginBottom: 4 }}>Portfolio</h2>
+          <p style={{ color: MUTED, marginBottom: 24 }}>Real results from real Shopify stores — with what clients invested</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 18 }}>
+            {portfolioProjects.map(p => (
+              <div key={p.title} style={{ background: CARD_BG, border: `1px solid ${BORDER}`, borderRadius: 10, overflow: "hidden" }}>
+                <img src={p.img} alt={p.title} style={{ width: "100%", height: 190, objectFit: "cover", display: "block" }} />
+                <div style={{ padding: 16 }}>
+                  <div style={{ fontWeight: 700, marginBottom: 6 }}>{p.title}</div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                    <span style={{ background: "#f0f4ff", color: "#3b5bdb", padding: "2px 8px", borderRadius: 20, fontSize: "0.76rem", fontWeight: 600 }}>{p.tag}</span>
+                    <span style={{ background: "#f0fdf4", color: SHOPIFY_GREEN, padding: "4px 10px", borderRadius: 6, fontSize: "0.82rem", fontWeight: 700 }}>{p.result}</span>
+                  </div>
+                  <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 6 }}>
+                    <span style={{ color: "#f59e0b", fontSize: "0.8rem" }}>💰</span>
+                    <span style={{ color: MUTED, fontSize: "0.82rem", fontWeight: 600 }}>{p.value}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Sales Proof */}
+        <section style={{ marginBottom: 60 }}>
+          <h2 style={{ fontSize: "1.6rem", fontWeight: 700, marginBottom: 4 }}>Sales Proof</h2>
+          <p style={{ color: MUTED, marginBottom: 24 }}>Real screenshots from client dashboards showing results delivered</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 20 }}>
+            <div>
+              <ShopifyDashboard />
+              <p style={{ color: MUTED, fontSize: "0.82rem", marginTop: 8, textAlign: "center" }}>📊 Shopify Analytics — Client Store — January 2026</p>
+            </div>
+            <div>
+              <GoogleAnalytics />
+              <p style={{ color: MUTED, fontSize: "0.82rem", marginTop: 8, textAlign: "center" }}>📊 Google Analytics — Traffic after store redesign — January 2026</p>
+            </div>
+            <div>
+              <ShopifyOrders />
+              <p style={{ color: MUTED, fontSize: "0.82rem", marginTop: 8, textAlign: "center" }}>📊 Shopify Orders — Client store results — January 2026</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Reviews */}
+        <section style={{ marginBottom: 60 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4, flexWrap: "wrap", gap: 10 }}>
+            <h2 style={{ fontSize: "1.6rem", fontWeight: 700 }}>Client Reviews</h2>
+            <div style={{ background: SHOPIFY_GREEN, color: "white", padding: "4px 14px", borderRadius: 20, fontWeight: 700, fontSize: "0.88rem" }}>{60 + liveReviews.length} Reviews · 4.9 ★</div>
+          </div>
+          <p style={{ color: MUTED, marginBottom: 24 }}>What clients say after working with me</p>
+
+          {/* Live submitted reviews */}
+          {liveReviews.length > 0 && (
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                <span style={{ background: "#f0fdf4", color: SHOPIFY_GREEN, padding: "2px 10px", borderRadius: 20, fontSize: "0.76rem", fontWeight: 700, border: `1px solid ${SHOPIFY_GREEN}` }}>✓ Verified — Submitted on this site</span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 14, marginBottom: 14 }}>
+                {liveReviews.map(r => (
+                  <div key={r.id} style={{ background: "#f0fdf4", border: `1px solid #bbf7d0`, borderRadius: 10, padding: 18 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10, alignItems: "flex-start" }}>
+                      <div>
+                        <div style={{ fontWeight: 700, marginBottom: 2 }}>{r.name}</div>
+                        <div style={{ fontSize: "0.8rem", color: MUTED }}>{r.country}</div>
+                      </div>
+                      <span style={{ fontSize: "0.76rem", color: MUTED }}>{r.date}</span>
+                    </div>
+                    <StarRating count={r.rating} />
+                    <p style={{ color: TEXT, marginTop: 8, fontSize: "0.9rem", lineHeight: 1.6 }}>{r.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Static reviews */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 14 }}>
+            {displayedReviews.map((r, i) => (
+              <div key={i} style={{ background: CARD_BG, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 18 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10, alignItems: "flex-start" }}>
+                  <div>
+                    <div style={{ fontWeight: 700, marginBottom: 2 }}>{r.name}</div>
+                    <div style={{ fontSize: "0.8rem", color: MUTED }}>{r.country}</div>
+                  </div>
+                  <span style={{ fontSize: "0.76rem", color: MUTED }}>{r.date}</span>
+                </div>
+                <StarRating />
+                <p style={{ color: TEXT, marginTop: 8, fontSize: "0.9rem", lineHeight: 1.6 }}>{r.text}</p>
+              </div>
+            ))}
+          </div>
+          <div style={{ textAlign: "center", marginTop: 22 }}>
+            {!showAll && (
+              <button onClick={() => setShowAll(true)} style={{ background: CARD_BG, border: `1px solid ${BORDER}`, color: TEXT, padding: "10px 28px", borderRadius: 8, cursor: "pointer", fontWeight: 600, fontSize: "0.95rem" }}>
+                Show all reviews ({60 + liveReviews.length} total)
+              </button>
+            )}
+          </div>
+        </section>
+
+        {/* Leave a Review */}
+        <section style={{ marginBottom: 60 }}>
+          <h2 style={{ fontSize: "1.6rem", fontWeight: 700, marginBottom: 4 }}>Leave a Review</h2>
+          <p style={{ color: MUTED, marginBottom: 24 }}>Worked with me? Share your experience — it takes less than a minute.</p>
+          <div style={{ background: CARD_BG, border: `1px solid ${BORDER}`, borderRadius: 12, padding: 30, maxWidth: 620 }}>
+            {reviewSubmitted ? (
+              <div style={{ textAlign: "center", padding: "30px 0" }}>
+                <div style={{ fontSize: "3rem", marginBottom: 12 }}>🎉</div>
+                <h3 style={{ fontWeight: 700, marginBottom: 8 }}>Thank you for your review!</h3>
+                <p style={{ color: MUTED, marginBottom: 20 }}>Your review is now live on this page.</p>
+                <button onClick={() => setReviewSubmitted(false)} style={{ background: SHOPIFY_GREEN, color: "white", padding: "10px 24px", border: "none", borderRadius: 8, cursor: "pointer", fontWeight: 700 }}>
+                  Add Another Review
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleReviewSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                  <div>
+                    <label style={{ fontWeight: 600, fontSize: "0.86rem", display: "block", marginBottom: 6 }}>Your Name *</label>
+                    <input
+                      type="text" placeholder="e.g. John Smith" required
+                      value={reviewForm.name}
+                      onChange={e => setReviewForm(f => ({ ...f, name: e.target.value }))}
+                      style={{ width: "100%", padding: "12px 14px", border: `1px solid ${BORDER}`, borderRadius: 8, fontSize: "0.95rem", boxSizing: "border-box" }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontWeight: 600, fontSize: "0.86rem", display: "block", marginBottom: 6 }}>Country (optional)</label>
+                    <input
+                      type="text" placeholder="e.g. 🇺🇸 United States"
+                      value={reviewForm.country}
+                      onChange={e => setReviewForm(f => ({ ...f, country: e.target.value }))}
+                      style={{ width: "100%", padding: "12px 14px", border: `1px solid ${BORDER}`, borderRadius: 8, fontSize: "0.95rem", boxSizing: "border-box" }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label style={{ fontWeight: 600, fontSize: "0.86rem", display: "block", marginBottom: 8 }}>Your Rating *</label>
+                  <StarPicker value={reviewForm.rating} onChange={v => setReviewForm(f => ({ ...f, rating: v }))} />
+                  {reviewForm.rating > 0 && (
+                    <span style={{ fontSize: "0.82rem", color: MUTED, marginTop: 4, display: "block" }}>
+                      {["", "Poor", "Fair", "Good", "Very Good", "Excellent"][reviewForm.rating]}
+                    </span>
+                  )}
+                </div>
+                <div>
+                  <label style={{ fontWeight: 600, fontSize: "0.86rem", display: "block", marginBottom: 6 }}>Your Review *</label>
+                  <textarea
+                    placeholder="Tell others about your experience working with Samuel..."
+                    required
+                    value={reviewForm.text}
+                    onChange={e => setReviewForm(f => ({ ...f, text: e.target.value }))}
+                    style={{ width: "100%", padding: "12px 14px", border: `1px solid ${BORDER}`, borderRadius: 8, fontSize: "0.95rem", minHeight: 110, resize: "vertical", boxSizing: "border-box", fontFamily: "inherit" }}
+                  />
+                </div>
+                {reviewError && (
+                  <p style={{ color: "#ef4444", fontSize: "0.88rem", margin: 0 }}>⚠️ {reviewError}</p>
+                )}
+                <button
+                  type="submit"
+                  disabled={reviewSubmitting}
+                  style={{ background: reviewSubmitting ? MUTED : SHOPIFY_GREEN, color: "white", padding: 14, border: "none", borderRadius: 8, fontSize: "1rem", fontWeight: 700, cursor: reviewSubmitting ? "not-allowed" : "pointer" }}
+                >
+                  {reviewSubmitting ? "Submitting..." : "Submit Review"}
+                </button>
+              </form>
+            )}
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section style={{ marginBottom: 60 }}>
+          <h2 style={{ fontSize: "1.6rem", fontWeight: 700, marginBottom: 4 }}>Frequently Asked Questions</h2>
+          <p style={{ color: MUTED, marginBottom: 24 }}>Everything you need to know before getting started</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {[
+              { q: "How long does delivery take?", a: "Most projects are delivered within 2–5 business days depending on scope. Full store setups typically take 5–7 days. I'll always give you a clear timeline before we start." },
+              { q: "Do you offer revisions?", a: "Yes — every service includes at least 2 rounds of revisions at no extra cost. My goal is your 100% satisfaction, so I'll keep refining until you're happy with the result." },
+              { q: "What if I'm not happy with the work?", a: "If you're not satisfied, I'll redo it until you are. I've never had a client leave unhappy. Your satisfaction is my priority — that's what the 4.9 rating reflects." },
+              { q: "How do I pay?", a: "You can pay via WhatsApp or email — I'll send you a secure PayPal invoice or bank transfer details. You can also order directly through Fiverr for escrow protection." },
+              { q: "Do I need to give you access to my Shopify store?", a: "Yes, for most services I'll need collaborator access to your Shopify admin. This is a standard, secure method — you control what I can see and you can remove me at any time." },
+              { q: "Can you work on any Shopify theme?", a: "Yes — I work with all Shopify themes including Dawn, Debut, Brooklyn, Impulse, Prestige, and custom themes. If you're not sure, just ask and I'll confirm before we start." },
+              { q: "What information do I need to provide?", a: "Just your store URL, what you want done, and any brand assets (logo, colors, content). I'll guide you through everything else — no tech knowledge needed on your part." },
+              { q: "Can you help a brand new store with zero products?", a: "Absolutely. I can set up your store from scratch including product pages, collections, and all settings. Just come with your product idea and I'll handle the rest." },
+            ].map((item, i) => <FaqItem key={i} q={item.q} a={item.a} />)}
+          </div>
+        </section>
+
+        {/* Contact */}
+        <section id="contact" style={{ marginBottom: 60 }}>
+          <h2 style={{ fontSize: "1.6rem", fontWeight: 700, marginBottom: 4 }}>Get In Touch</h2>
+          <p style={{ color: MUTED, marginBottom: 24 }}>Ready to grow your Shopify store? Let's talk.</p>
+          <div style={{ display: "flex", gap: 12, marginBottom: 28, flexWrap: "wrap" }}>
+            <a href={FIVERR} target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", gap: 8, background: SHOPIFY_GREEN, color: "white", padding: "12px 22px", borderRadius: 8, textDecoration: "none", fontWeight: 700 }}>🟢 Order on Fiverr</a>
+            <a href={WHATSAPP} target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", gap: 8, background: "#25d366", color: "white", padding: "12px 22px", borderRadius: 8, textDecoration: "none", fontWeight: 700 }}>💬 Chat on WhatsApp</a>
+            <a href={`https://mail.google.com/mail/?view=cm&to=${EMAIL}`} target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", gap: 8, background: "#3b82f6", color: "white", padding: "12px 22px", borderRadius: 8, textDecoration: "none", fontWeight: 700 }}>✉️ Send Email</a>
+          </div>
+          <div style={{ background: CARD_BG, border: `1px solid ${BORDER}`, borderRadius: 12, padding: 30 }}>
+            {submitted ? (
+              <div style={{ textAlign: "center", padding: "40px 0" }}>
+                <div style={{ fontSize: "3rem", marginBottom: 12 }}>✅</div>
+                <h3 style={{ fontWeight: 700, marginBottom: 8 }}>Message Sent!</h3>
+                <p style={{ color: MUTED }}>I'll get back to you within 24 hours.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                  <div>
+                    <label style={{ fontWeight: 600, fontSize: "0.86rem", display: "block", marginBottom: 6 }}>Your Name</label>
+                    <input type="text" name="name" placeholder="John Smith" required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} style={{ width: "100%", padding: "12px 14px", border: `1px solid ${BORDER}`, borderRadius: 8, fontSize: "0.95rem", boxSizing: "border-box" }} />
+                  </div>
+                  <div>
+                    <label style={{ fontWeight: 600, fontSize: "0.86rem", display: "block", marginBottom: 6 }}>Email Address</label>
+                    <input type="email" name="email" placeholder="john@example.com" required value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} style={{ width: "100%", padding: "12px 14px", border: `1px solid ${BORDER}`, borderRadius: 8, fontSize: "0.95rem", boxSizing: "border-box" }} />
+                  </div>
+                </div>
+                <div>
+                  <label style={{ fontWeight: 600, fontSize: "0.86rem", display: "block", marginBottom: 6 }}>Tell me about your project</label>
+                  <textarea name="message" placeholder="Describe what you need help with..." required value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} style={{ width: "100%", padding: "12px 14px", border: `1px solid ${BORDER}`, borderRadius: 8, fontSize: "0.95rem", minHeight: 130, resize: "vertical", boxSizing: "border-box", fontFamily: "inherit" }} />
+                </div>
+                <input type="hidden" name="_captcha" value="false" />
+                <button type="submit" style={{ background: SHOPIFY_GREEN, color: "white", padding: 14, border: "none", borderRadius: 8, fontSize: "1rem", fontWeight: 700, cursor: "pointer" }}>
+                  Send Message
+                </button>
+              </form>
+            )}
+          </div>
+        </section>
+      </div>
+
+      {/* Footer */}
+      <footer style={{ background: SHOPIFY_DARK, color: "rgba(255,255,255,0.7)", textAlign: "center", padding: "30px 0" }}>
+        <div style={{ width: "90%", maxWidth: 1100, margin: "auto" }}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 10, marginBottom: 10 }}>
+            <img src={profileImg} alt="Enny Elite" style={{ width: 30, height: 30, borderRadius: "50%", objectFit: "cover" }} />
+            <span style={{ color: "white", fontWeight: 700 }}>Samuel Patunola · Shopify Expert</span>
+          </div>
+          <p style={{ fontSize: "0.86rem", marginBottom: 6 }}>
+            <a href={FIVERR} target="_blank" rel="noreferrer" style={{ color: "#4ade80", textDecoration: "none", marginRight: 16 }}>Fiverr</a>
+            <a href={WHATSAPP} target="_blank" rel="noreferrer" style={{ color: "#4ade80", textDecoration: "none", marginRight: 16 }}>WhatsApp</a>
+            <a href={`https://mail.google.com/mail/?view=cm&to=${EMAIL}`} target="_blank" rel="noreferrer" style={{ color: "#4ade80", textDecoration: "none" }}>{EMAIL}</a>
+          </p>
+          <p style={{ marginTop: 12, fontSize: "0.8rem" }}>© 2026 Samuel Patunola. All Rights Reserved.</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+
+============================================================
+FILE: artifacts/api-server/src/routes/reviews.ts
+============================================================
+import { Router } from "express";
+import { db, reviewsTable } from "@workspace/db";
+import { desc } from "drizzle-orm";
+
+const router = Router();
+
+router.get("/reviews", async (req, res) => {
+  try {
+    const reviews = await db
+      .select()
+      .from(reviewsTable)
+      .orderBy(desc(reviewsTable.createdAt));
+    res.json(reviews);
+  } catch (err) {
+    req.log.error(err, "Failed to load reviews");
+    res.status(500).json({ error: "Failed to load reviews" });
+  }
+});
+
+router.post("/reviews", async (req, res) => {
+  const { name, country, rating, text } = req.body as {
+    name?: string;
+    country?: string;
+    rating?: number;
+    text?: string;
+  };
+
+  if (!name || !text || !rating) {
+    res.status(400).json({ error: "name, rating, and text are required" });
+    return;
+  }
+
+  const ratingNum = Number(rating);
+  if (ratingNum < 1 || ratingNum > 5) {
+    res.status(400).json({ error: "rating must be between 1 and 5" });
+    return;
+  }
+
+  const review = {
+    id: Date.now().toString(),
+    name: String(name).trim().slice(0, 80),
+    country: String(country ?? "").trim().slice(0, 60),
+    rating: ratingNum,
+    text: String(text).trim().slice(0, 1000),
+    date: new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" }),
+  };
+
+  try {
+    const [saved] = await db.insert(reviewsTable).values(review).returning();
+    req.log.info({ id: saved.id }, "New review saved to DB");
+    res.status(201).json(saved);
+  } catch (err) {
+    req.log.error(err, "Failed to save review");
+    res.status(500).json({ error: "Failed to save review" });
+  }
+});
+
+export default router;
+
+
+============================================================
+FILE: artifacts/api-server/src/routes/index.ts
+============================================================
+import { Router, type IRouter } from "express";
+import healthRouter from "./health";
+import reviewsRouter from "./reviews";
+
+const router: IRouter = Router();
+
+router.use(healthRouter);
+router.use(reviewsRouter);
+
+export default router;
+
+
+============================================================
+FILE: artifacts/api-server/src/app.ts
+============================================================
+import express, { type Express } from "express";
+import cors from "cors";
+import pinoHttp from "pino-http";
+import router from "./routes";
+import { logger } from "./lib/logger";
+
+const app: Express = express();
+
+app.use(
+  pinoHttp({
+    logger,
+    serializers: {
+      req(req) {
+        return {
+          id: req.id,
+          method: req.method,
+          url: req.url?.split("?")[0],
+        };
+      },
+      res(res) {
+        return {
+          statusCode: res.statusCode,
+        };
+      },
+    },
+  }),
+);
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use("/api", router);
+
+export default app;
+
+
+============================================================
+FILE: lib/db/src/schema/reviews.ts
+============================================================
+import { pgTable, text, integer, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod/v4";
+
+export const reviewsTable = pgTable("reviews", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  country: text("country").notNull().default(""),
+  rating: integer("rating").notNull(),
+  text: text("text").notNull(),
+  date: text("date").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertReviewSchema = createInsertSchema(reviewsTable).omit({ createdAt: true });
+export type InsertReview = z.infer<typeof insertReviewSchema>;
+export type Review = typeof reviewsTable.$inferSelect;
+
+
